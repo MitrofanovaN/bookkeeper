@@ -7,7 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class TestModel:
     pk: int = 0
-    comment: str = 't'
+    comment: str = ''
 
 
 @pytest.fixture
@@ -17,7 +17,7 @@ def custom_class():
 
 @pytest.fixture
 def repo():
-    return SQLiteRepository('TEST.db', TestModel)
+    return SQLiteRepository('test.db', TestModel)
 
 
 def test_crud(repo, custom_class):
@@ -52,23 +52,20 @@ def test_cannot_delete_nonexistent(repo):
 
 def test_cannot_update_without_pk(repo, custom_class):
     obj = custom_class()
-    print(obj)
     with pytest.raises(ValueError):
         repo.update(obj)
 
 
 def test_get_all(repo, custom_class):
-    datasize = 5
-    objects = [custom_class() for i in range(datasize)]
+    objects = [custom_class() for i in range(5)]
     for o in objects:
         repo.add(o)
     assert repo.get_all() == objects
 
 
 def test_get_all_with_condition(repo, custom_class):
-    datasize = 5
     objects = []
-    for i in range(datasize):
+    for i in range(5):
         o = custom_class()
         o.comment = 'test'
         repo.add(o)
