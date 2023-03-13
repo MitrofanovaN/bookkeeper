@@ -30,7 +30,14 @@ class SQLiteRepository(AbstractRepository[T]):
 
         keys = [str(k) for k in self.fields.keys()]
         vals = [str(v) for v in self.fields.values()]
-        vals = ['INTEGER' if v.find('int') != -1 else 'TEXT' for v in vals]
+
+        def type_check(val: str) -> str:
+            if val.find('int') != -1:
+                return 'INTEGER'
+            else:
+                return 'TEXT'
+
+        vals = [type_check(v) for v in vals]
         names = [str(k) + ' ' + str(v) for (k, v) in zip(keys, vals)]
         names = ['pk INTEGER PRIMARY KEY'] + names
         names = ', '.join(names)
